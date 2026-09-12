@@ -43,6 +43,26 @@ class Robot:
             alpha = dh_parameters[i, 1]
             d = dh_parameters[i, 2]
             theta = dh_parameters[i, 3]
+            joint_type = dh_parameters[i, 4]
             link = Link(name=name, alpha=alpha, a=a, d=d, theta=theta,  joint_type = joint_type)
             self.links.append(link)
             self.link_names.append(link.name)
+
+
+    def transform(self, link_name, q):
+
+        link_index = self.link_names.index(link_name)
+
+        if(len(q)) != len(self.links):
+            raise ValueError("The length of q must match the number of links in the robot.")    
+
+        transformation = np.eye(4)
+        for i in range(link_index + 1):
+            transformation = (transformation @self.link_names[i].transform(q[i]))
+
+        return transformation
+
+    def forward_kinematics(self, q):
+        end_effector = self.link_names[-1]
+        
+        return self.transform(end_effector, q)
