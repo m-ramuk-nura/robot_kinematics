@@ -30,10 +30,10 @@ class Robot:
                 raise TypeError("All elements in link_list must be instances of the Link class.")
 
 
-    def init_dh(dh_parameters):
+    def init_dh(self,dh_parameters):
         dof = dh_parameters.shape[0]
         try:
-            assert(dh_parameters.shape[1] == 4)
+            assert(dh_parameters.shape[1] == 5)
         except:
             raise("DH Parameters Table not correct")
         
@@ -58,11 +58,11 @@ class Robot:
 
         transformation = np.eye(4)
         for i in range(link_index + 1):
-            transformation = (transformation @self.link_names[i].transform(q[i]))
+            transformation = (transformation @self.links[i].transform(q[i]))
 
         return transformation
 
     def forward_kinematics(self, q):
         end_effector = self.link_names[-1]
-        
+
         return self.transform(end_effector, q)
